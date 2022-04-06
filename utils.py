@@ -1,3 +1,5 @@
+from enum import unique
+from matplotlib.pyplot import get
 import pandas as pd
 import numpy as np
 
@@ -28,7 +30,26 @@ def get_year(df_pivot):
     Returns a pd.dataframe with a new column for the years called "year"
     '''
     df = index_to_datetime(df_pivot)
-
     df["Year"] = df.index.year
 
     return df
+
+def remove_years(df_pivot, year:int, thresh:float):
+    '''
+    Remove the first years of the stocks and checks viablility
+    '''
+
+    df = get_year(df_pivot)
+    df = df[df["Year"].isin(df["Year"].unique()[year:])]
+
+    return get_viable_stocks(df, thresh)
+
+
+def viable_years(df_pivot, thresh:float):
+    df = get_year(df_pivot.isna())
+
+    grouped = df.groupby("Year") 
+    
+    grouped = grouped.mean()[grouped.mean() < thresh]
+
+    return np.array(grouped.dropna(axis=1).columns)
