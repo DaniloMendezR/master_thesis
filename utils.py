@@ -1,5 +1,5 @@
 from enum import unique
-from matplotlib.pyplot import get
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
@@ -67,3 +67,48 @@ def get_weekly_stocks(df_pivot, tolerance:int):
     final = grouped <= tolerance
     
     return final.sum(axis = 1)
+
+def plothist(df_pivot, thresh:int):
+    fig, ax = plt.subplots(3,2, sharex = True, sharey = True, tight_layout = True)
+    zero = get_weekly_stocks(df_pivot, 0)
+    one = get_weekly_stocks(df_pivot, 1)
+    two = get_weekly_stocks(df_pivot, 2)
+    three = get_weekly_stocks(df_pivot, 3)
+    four = get_weekly_stocks(df_pivot, 4)
+    five = get_weekly_stocks(df_pivot, 5)
+
+
+    ax[0,0].hist(zero)
+    ax[0,1].hist(one)
+    ax[1,0].hist(two)
+    ax[1,1].hist(three)
+    ax[2,0].hist(four)
+    ax[2,1].hist(five)
+    ax[0,0].vlines(thresh,0, 400, linestyles = "dashed", color = "r", label = "80")
+    ax[0,1].vlines(thresh, 0, 400, linestyles = "dashed", color = "r",label = "80")
+    ax[1,0].vlines(thresh, 0, 400, linestyles = "dashed", color = "r", label = "80")
+    ax[1,1].vlines(thresh, 0, 400, linestyles = "dashed", color = "r", label = "80")
+    ax[2,0].vlines(thresh, 0, 400, linestyles = "dashed", color = "r", label = "80")
+    ax[2,1].vlines(thresh, 0, 400, linestyles = "dashed", color = "r", label = "80")
+
+
+    ax[0,0].set_ylabel("Count")
+    ax[1,0].set_ylabel("Count")
+    ax[2,0].set_ylabel("Count")
+    ax[2,0].set_xlabel("Number of viable stocks per week")
+    ax[2,1].set_xlabel("Number of viable stocks per week")
+
+    ax[0,0].set_title("0 missing values a week")
+    ax[0,1].set_title("=<1 missing value a week")
+    ax[1,0].set_title("=<2 missing values a week")
+    ax[1,1].set_title("=<3 missing values a week")
+    ax[2,0].set_title("=<4 missing values a week")
+    ax[2,1].set_title("=<5 missing values a week")
+    return plt.show()
+
+def percent_above(df_pivot, thresh:int):
+    for i in [0,1,2,3,4,5]:
+        x = get_weekly_stocks(df_pivot, i) > thresh
+        x = x.mean()*100
+        print("If we allow " + str(i) + " or less NaN's we get " + str(x) + " percent of weeks with more than " + str(thresh) + " viable stocks")
+    return 
