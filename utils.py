@@ -46,6 +46,10 @@ def remove_years(df_pivot, year:int, thresh:float):
 
 
 def viable_years(df_pivot, thresh:float):
+    '''
+    Returns stocks where for every year, the amout of NA's doesn't exceed the threshold
+    '''
+
     df = get_year(df_pivot.isna())
 
     grouped = df.groupby("Year") 
@@ -53,3 +57,13 @@ def viable_years(df_pivot, thresh:float):
     grouped = grouped.mean()[grouped.mean() < thresh]
 
     return np.array(grouped.dropna(axis=1).columns)
+
+def get_weekly_stocks(df_pivot, tolerance:int):
+    df = get_year(df_pivot.isna())
+    df["Week"] = df.index.isocalendar().week
+
+    grouped = df.groupby(["Year", "Week"])
+    grouped = grouped.sum()
+    final = grouped <= tolerance
+    
+    return final.sum(axis = 1)
