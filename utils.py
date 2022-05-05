@@ -7,7 +7,8 @@ import numpy as np
 
 ## Helper functions to deal with NA's
 
-
+def aggregate_sentiment():
+    return None
 
 
 def get_viable_stocks(df_pivot, thresh:float):
